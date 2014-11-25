@@ -58,15 +58,10 @@ raw['sac_targeted'] = apply(raw[, sac_targeted], 1, max)
 raw['sac_treated'] = apply(raw[, sac_treated], 1, max)
 
 
-# #condense the dataset to something more manageable
-# keep_cols = c("country_name", "region_name", "district_name", "district_global_task_force_id",
-#               "fiscal_year", "reporting_period", "disease", "persons_at_risk", "sac_at_risk",
-#               'number_targeted_all', 'number_treated_all', 'number_targeted_usaid', 
-#               'number_treated_usaid', 'sac_targeted', 'sac_treated')
-# 
-# raw_cvg = raw[, keep_cols]
+#####################################################
+##Condense the dataset to something more manageable##
+#####################################################
 
-#condense the dataset to something more manageable
 keep_cols = c("country_name", "region_name", "district_name", "fiscal_year", "disease", 
               "persons_at_risk", "sac_at_risk", 'number_targeted_all', 'number_treated_all', 
               'number_targeted_usaid', 'number_treated_usaid', 'sac_targeted', 'sac_treated')
@@ -87,9 +82,9 @@ raw_cvg[(raw_cvg$disease == 'Schisto' | raw_cvg$disease == 'STH'), 'sac_epi_cvg'
 
 
 #Write to CSV
-write.csv(raw_cvg, "C:\\Users\\reowen\\Documents\\Datasets\\cvg_trends.csv")
+write.csv(raw_cvg, "C:\\Users\\reowen\\Documents\\Datasets\\raw_cvg_trends.csv")
 
-#RESHAPE THE DATASET: fiscal years in columns
+#RESHAPE, CONDENSE THE DATASET: fiscal years in columns
 
 w = reshape(raw_cvg, 
             timevar = 'fiscal_year', 
