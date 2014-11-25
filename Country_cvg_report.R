@@ -134,10 +134,40 @@ sth = reshape(sth,
               idvar = c("country_name", "region_name", "district_name", "disease"), 
               direction = 'wide')
 
+# library(xlsx)
+# save.xlsx <- function (file, ...)
+# {
+#   require(xlsx, quietly = TRUE)
+#   objects <- list(...)
+#   fargs <- as.list(match.call(expand.dots = TRUE))
+#   objnames <- as.character(fargs)[-c(1, 2)]
+#   nobjects <- length(objects)
+#   for (i in 1:nobjects) {
+#     if (i == 1)
+#       write.xlsx(objects[[i]], file, sheetName = objnames[i])
+#     else write.xlsx(objects[[i]], file, sheetName = objnames[i],
+#                     append = TRUE)
+#   }
+#   
+#   print(paste("Workbook", file, "has", nobjects, "worksheets."))
+# }
+# 
+# save.xlsx("C:\\Users\\reowen\\Documents\\Datasets\\cvg_trends.xlsx", lf, oncho, sch, sth, trachoma)
 
+library(xlsx)
+cvg_trends = createWorkbook()
+lf_tab = createSheet(wb=cvg_trends, sheetName="LF")
+oncho_tab = createSheet(wb=cvg_trends, sheetName="Oncho")
+sch_tab = createSheet(wb=cvg_trends, sheetName="Schisto")
+sth_tab = createSheet(wb=cvg_trends, sheetName="STH")
+trachoma_tab = createSheet(wb=cvg_trends, sheetName="Trachoma")
+addDataFrame(x=lf, sheet=lf_tab)
+addDataFrame(x=oncho, sheet=oncho_tab)
+addDataFrame(x=sch, sheet=sch_tab)
+addDataFrame(x=sth, sheet=sth_tab)
+addDataFrame(x=trachoma, sheet=trachoma_tab)
+saveWorkbook(cvg_trends, "C:\\Users\\reowen\\Documents\\Datasets\\cvg_trends.xlsx")
 
-
-write.csv(write_data, "C:\\Users\\reowen\\Documents\\Datasets\\cvg_trends_wide.csv")
 
 
 
