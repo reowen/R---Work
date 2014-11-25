@@ -16,18 +16,8 @@ colnames = c("country_name", "region_name", "district_name", "district_global_ta
 
 raw = master_file[, colnames]
 
-# for(i in 1:length(colnames)){
-#   names(raw)[i] = colnames[i]
-# }
-
 l = length(colnames)
 raw[,(11:l)] = as.numeric(as.character(raw[,(11:l)]))
-
-# for(i in 11:length(colnames)){
-#   raw[, colnames[i]] = as.numeric(as.character(raw[, colnames[i]]))
-# }
-
-# raw[is.na(raw[,(11:l)]) == TRUE, (11:l)] = 0
 
 for(i in 11:length(colnames)){
   raw[is.na(raw[,colnames[i]]) == TRUE, colnames[i]] = 0
@@ -89,7 +79,9 @@ raw_cvg[(raw_cvg$disease == 'Schisto' | raw_cvg$disease == 'STH'), 'sac_epi_cvg'
 # #Write to CSV
 # write.csv(raw_cvg, "C:\\Users\\reowen\\Documents\\Datasets\\raw_cvg_trends.csv")
 
-#RESHAPE, CONDENSE THE DATASET: fiscal years in columns
+###################################################################
+#RESHAPE, CONDENSE THE DATASET by disease: fiscal years in columns#
+###################################################################
 
 reg_cols = c('country_name', 'region_name', 'district_name', 'fiscal_year', 'disease', 
               'persons_at_risk', 'targeted', 'treated', 'prg_cvg', 'epi_cvg')
@@ -134,25 +126,6 @@ sth = reshape(sth,
               idvar = c("country_name", "region_name", "district_name", "disease"), 
               direction = 'wide')
 
-# library(xlsx)
-# save.xlsx <- function (file, ...)
-# {
-#   require(xlsx, quietly = TRUE)
-#   objects <- list(...)
-#   fargs <- as.list(match.call(expand.dots = TRUE))
-#   objnames <- as.character(fargs)[-c(1, 2)]
-#   nobjects <- length(objects)
-#   for (i in 1:nobjects) {
-#     if (i == 1)
-#       write.xlsx(objects[[i]], file, sheetName = objnames[i])
-#     else write.xlsx(objects[[i]], file, sheetName = objnames[i],
-#                     append = TRUE)
-#   }
-#   
-#   print(paste("Workbook", file, "has", nobjects, "worksheets."))
-# }
-# 
-# save.xlsx("C:\\Users\\reowen\\Documents\\Datasets\\cvg_trends.xlsx", lf, oncho, sch, sth, trachoma)
 
 library(xlsx)
 cvg_trends = createWorkbook()
