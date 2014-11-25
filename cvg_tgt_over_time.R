@@ -11,19 +11,13 @@ colnames = c("country_name", "region_name", "district_name", "district_global_ta
              "sac_treated_usaid_funding_r1", "sac_treated_usaid_funding_r2", "sac_targeted_with_usaid_support", 
              "sac_treated_usaid_funding")
 
-cvg_targets = data.frame(master_file[,colnames[1]])
-for(i in 2:length(colnames)){
-  cvg_targets[colnames[i]] = master_file[,colnames[i]]
-}
-
-for(i in 1:length(colnames)){
-  names(cvg_targets)[i] = colnames[i]
-}
+cvg_targets = master_file[, colnames]
 
 for(i in 8:length(colnames)){
   cvg_targets[, colnames[i]] = as.numeric(as.character(cvg_targets[, colnames[i]]))
 }
 
+#so that max() function will work
 for(i in 8:length(colnames)){
   cvg_targets[is.na(cvg_targets[,colnames[i]]) == TRUE, colnames[i]] = 0
 }

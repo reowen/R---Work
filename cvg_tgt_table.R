@@ -11,10 +11,7 @@ colnames = c("country_name", "region_name", "district_name", "district_global_ta
              "persons_targeted_usaid_funding_r2", "persons_treated_usaid_funding", "persons_treated_usaid_funding_r1", 
              "persons_treated_usaid_funding_r2")
 
-cvg_targets = data.frame(master_file[,colnames[1]])
-for(i in 2:length(colnames)){
-  cvg_targets[colnames[i]] = master_file[,colnames[i]]
-}
+cvg_targets = master_file[, colnames]
 
 for(i in length(colnames)){
   names(cvg_targets)[i] = colnames[i]

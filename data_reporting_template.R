@@ -10,10 +10,7 @@ colnames = c("country_name", "region_name", "district_name", "district_global_ta
              "funding_src_r1", "funding_src_r2", "persons_targeted_usaid_funding", "persons_targeted_usaid_funding_r1",
              "persons_targeted_usaid_funding_r2")
 
-prg_epi_cvg = data.frame(master_file[,colnames[1]])
-for(i in 2:length(colnames)){
-  prg_epi_cvg[colnames[i]] = master_file[,colnames[i]]
-}
+prg_epi_cvg = master_file[, colnames]
 
 for(i in 1:length(colnames)){
   names(prg_epi_cvg)[i] = colnames[i]

@@ -13,10 +13,7 @@ colnames = c("country_name", "region_name", "district_name", "district_global_ta
 envision = c("Benin", "Cameroon", "Guinea", "Haiti", "Indonesia", "Nepal", "Senegal", "Uganda", "Mali")
 
 
-lf = data.frame(master_file[,colnames[1]])
-for(i in 2:length(colnames)){
-  lf[colnames[i]] = master_file[,colnames[i]]
-}
+lf = master_file[, colnames]
 
 for(i in 1:length(colnames)){
   names(lf)[i] = colnames[i]
