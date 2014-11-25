@@ -70,11 +70,11 @@ keep_cols = c("country_name", "region_name", "district_name", "fiscal_year", "di
 raw_cvg = raw[raw$reporting_period == '2nd SAR (October-September)', keep_cols]
 
 #Code program coverage variables
-raw_cvg['prg_cvg_all'] = round((raw_cvg[, 'number_treated_all'] / raw_cvg[, 'number_targeted_all']), digits=4)
+raw_cvg['prg_cvg'] = round((raw_cvg[, 'number_treated_all'] / raw_cvg[, 'number_targeted_all']), digits=4)
 raw_cvg['prg_cvg_usaid'] = round((raw_cvg[, 'number_treated_usaid'] / raw_cvg[, 'number_targeted_usaid']), digits=4)
 
 #Code epi coverage variables
-raw_cvg['epi_cvg_all'] = round((raw_cvg[,'number_treated_all'] / raw_cvg[,'persons_at_risk']), digits=4)
+raw_cvg['epi_cvg'] = round((raw_cvg[,'number_treated_all'] / raw_cvg[,'persons_at_risk']), digits=4)
 raw_cvg['epi_cvg_usaid'] = round((raw_cvg[,'number_treated_usaid'] / raw_cvg[,'persons_at_risk']), digits=4)
 
 raw_cvg['sac_epi_cvg'] = NA
@@ -86,12 +86,20 @@ write.csv(raw_cvg, "C:\\Users\\reowen\\Documents\\Datasets\\raw_cvg_trends.csv")
 
 #RESHAPE, CONDENSE THE DATASET: fiscal years in columns
 
-w = reshape(raw_cvg, 
+keep_cols = c('country_name', 'region_name', 'district_name', 'fiscal_year', 'disease', 
+              'persons_at_risk', 'sac_at_risk', 'number_targeted_all', 'number_treated_all', 
+              'prg_cvg', 'epi_cvg', 'sac_epi_cvg')
+
+reshape_me = raw_cvg[, keep_cols]
+  
+w = reshape(reshape_me, 
             timevar = 'fiscal_year', 
             idvar = c("country_name", "region_name", "district_name", "disease"), 
             direction = 'wide')
 
-write.csv(w, "C:\\Users\\reowen\\Documents\\Datasets\\cvg_trends_wide.csv")
+write_data = w[with(w, order(disease, country_name, region_name, district_name)), ]
+
+write.csv(write_data, "C:\\Users\\reowen\\Documents\\Datasets\\cvg_trends_wide.csv")
 
 
 
