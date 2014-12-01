@@ -53,9 +53,26 @@ cvg_targets[(cvg_targets$number_targeted > 0), 'prg_cvg'] = round((cvg_targets[(
 cvg_targets['over_80'] = 0
 cvg_targets[(cvg_targets$prg_cvg >= 0.8), 'over_80'] = 1
 
-write.csv(cvg_targets, "C:\\Users\\reowen\\Documents\\Datasets\\FY13_prg_cvg.csv")
+write.csv(cvg_targets, "C:\\Users\\reowen\\Documents\\Datasets\\FY13_prg_cvg_district.csv")
 
 #Condense to country-level
+keep_cols = c("country_name", "region_name", "district_name", "disease", "treated", "over_80")
 
+country_cvg = cvg_targets[, keep_cols]
 
+groups = c(country_)
+
+country_cvg['total_treated'] = ave(country_cvg[,'treated'], country_cvg[,'country_name'], 
+                                   country_cvg[,'disease'], FUN = sum)
+
+country_cvg['total_over_80'] = ave(country_cvg[,'over_80'], country_cvg[,'country_name'], 
+                                   country_cvg[,'disease'], FUN = sum)
+
+keep_cols = c("country_name", "disease", 'total_treated', 'total_over_80')
+country_cvg = country_cvg[, keep_cols]
+country_cvg['percent_over_80'] = with(country_cvg, ifelse(total_treated > 0, (total_over_80 / total_treated), NA))
+
+#drop duplicates
+country_cvg = unique(country_cvg)
+write.csv(country_cvg, "C:\\Users\\reowen\\Documents\\Datasets\\FY13_prg_cvg_country.csv")
 
