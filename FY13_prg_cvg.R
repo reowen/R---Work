@@ -60,8 +60,6 @@ keep_cols = c("country_name", "region_name", "district_name", "disease", "treate
 
 country_cvg = cvg_targets[, keep_cols]
 
-groups = c(country_)
-
 country_cvg['total_treated'] = ave(country_cvg[,'treated'], country_cvg[,'country_name'], 
                                    country_cvg[,'disease'], FUN = sum)
 
