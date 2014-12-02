@@ -74,5 +74,14 @@ country_cvg['percent_over_80'] = with(country_cvg, ifelse(total_treated > 0, (to
 
 #drop duplicates
 country_cvg = unique(country_cvg)
+
+table = country_cvg[, c('country_name', 'disease', 'percent_over_80')]
+
+table = reshape(table, 
+                timevar = 'disease', 
+                idvar = 'country_name', 
+                direction = 'wide')
+
+
 write.csv(country_cvg, "C:\\Users\\reowen\\Documents\\Datasets\\FY13_prg_cvg_country.csv")
 
