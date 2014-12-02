@@ -83,5 +83,5 @@ table = reshape(table,
                 direction = 'wide')
 
 
-write.csv(country_cvg, "C:\\Users\\reowen\\Documents\\Datasets\\FY13_prg_cvg_country.csv")
+write.csv(table, "C:\\Users\\reowen\\Documents\\Datasets\\FY13_prg_cvg_table.csv")
 
