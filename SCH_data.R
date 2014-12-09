@@ -133,11 +133,17 @@ sch_map['usaid_mapped'] = ifelse(((sch_map$funding_src %in% usaid) & sch_map$map
 sch_map['rti_mapped'] = ifelse(((sch_map$funding_src %in% rti) & sch_map$mapping_completed == 'Yes'), 1, 0)
 
 
-sch['sch_eval'] = ifelse((sch$assessment_type == 'Schisto evaluation' & sch$assessment_completed == 'yes'), 1, 0)
-
 
 ##Merge everything
 
 final = merge(sch_out, treated_collapsed, by=c('country_name', 'fiscal_year'), all=TRUE)
+
+final = final[with(final, order(country_name, fiscal_year)),]
+
+final = reshape(final, 
+                timevar = 'fiscal_year', 
+                idvar = 'country_name', 
+                direction = 'wide')
+
 write.csv(final, "C:\\Users\\reowen\\Documents\\Datasets\\SCH_data.csv")
 
