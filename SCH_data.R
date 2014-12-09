@@ -69,7 +69,7 @@ treated_collapsed = unique(treated_collapsed)
 
 write.csv(treated_collapsed, "C:\\Users\\reowen\\Documents\\Datasets\\SCH_treatments.csv")
 
-rm(master_file, raw, treated, colnames, i, keep, treated_collapsed)
+rm(master_file, raw, treated, colnames, i, keep)
 
 ####################
 ##Schisto DSA data##
@@ -130,11 +130,15 @@ rm(me_master, sch, colnames, keep, usaid)
 ########################
 ##Schisto mapping data##
 ########################
+# 
+# map = read.csv("C:\\Users\\reowen\\Documents\\Offline Files\\mapping.csv")
+# 
+# colnames = c("country_name", "region_name", "district_name", "fiscal_year", 
+#              "assessment_type", "funding_src", "assessment_completed")
 
-me_master = read.csv("C:\\Users\\reowen\\Documents\\Offline Files\\mapping.csv")
 
 
-
-
+final = merge(sch_out, treated_collapsed, by=c('country_name', 'fiscal_year'), all=TRUE)
+write.csv(final, "C:\\Users\\reowen\\Documents\\Datasets\\SCH_data.csv")
 
 # merge sch_out, treated_collapsed (by country name and FY)
