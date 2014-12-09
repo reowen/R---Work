@@ -37,19 +37,7 @@ treated['USAID_treated'] = ave(treated[,"persons_treated_usaid_funding"],
 
 treated['RTI_treated'] = 0
 
-treated[(treated$funding_src == 1 | treated$funding_src == 99), 'RTI_treated'] = ave(treated[(treated$funding_src == 1 | treated$funding_src == 99),"persons_treated_usrti = c(1,99)
-
-sch['rti_evals_conducted'] = 0
-sch[(sch$funding_src %in% rti), 'rti_evals_conducted'] = ave(sch[(sch$funding_src %in% rti), 'sch_eval'],
-                                                             sch[(sch$funding_src %in% rti), 'country_name'],
-                                                             sch[(sch$funding_src %in% rti), 'fiscal_year'], 
-                                                             FUN = sum)
-
-sch['rti_sen_site'] = 0
-sch[(sch$funding_src %in% rti), 'rti_sen_site'] = ave(sch[(sch$funding_src %in% rti), 'sentinel_site'],
-                                                           sch[(sch$funding_src %in% rti), 'country_name'],
-                                                           sch[(sch$funding_src %in% rti), 'fiscal_year'], 
-                                                           FUN = sum)aid_funding"], 
+treated[(treated$funding_src == 1 | treated$funding_src == 99), 'RTI_treated'] = ave(treated[(treated$funding_src == 1 | treated$funding_src == 99), 'persons_treated_all_funding']
                                                                                      treated[(treated$funding_src == 1 | treated$funding_src == 99),"country_name"], 
                                                                                      treated[(treated$funding_src == 1 | treated$funding_src == 99),"fiscal_year"], 
                                                                                      FUN = sum)
@@ -130,13 +118,25 @@ rm(me_master, sch, colnames, keep, usaid)
 ########################
 ##Schisto mapping data##
 ########################
-# 
-# map = read.csv("C:\\Users\\reowen\\Documents\\Offline Files\\mapping.csv")
-# 
-# colnames = c("country_name", "region_name", "district_name", "fiscal_year", 
-#              "assessment_type", "funding_src", "assessment_completed")
+
+map = read.csv("C:\\Users\\reowen\\Documents\\Offline Files\\mapping.csv")
+
+colnames = c("country_name", "region_name", "district_name", "fiscal_year", 
+             "funding_src", "mapping_completed")
+
+sch_map = map[(map$applicable_disease == 'Schisto' & map$reporting_period == '2nd SAR (October-September)'), colnames]
+
+usaid = c(1,2,3,4,5,99)
+rti = c(1,99)
+
+sch_map['usaid_mapped'] = ifelse(((sch_map$funding_src %in% usaid) & sch_map$mapping_completed == 'Yes'), 1, 0)
+sch_map['rti_mapped'] = ifelse(((sch_map$funding_src %in% rti) & sch_map$mapping_completed == 'Yes'), 1, 0)
 
 
+sch['sch_eval'] = ifelse((sch$assessment_type == 'Schisto evaluation' & sch$assessment_completed == 'yes'), 1, 0)
+
+
+##Merge everything
 
 final = merge(sch_out, treated_collapsed, by=c('country_name', 'fiscal_year'), all=TRUE)
 write.csv(final, "C:\\Users\\reowen\\Documents\\Datasets\\SCH_data.csv")
