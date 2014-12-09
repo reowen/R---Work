@@ -37,7 +37,7 @@ treated['USAID_treated'] = ave(treated[,"persons_treated_usaid_funding"],
 
 treated['RTI_treated'] = 0
 
-treated[(treated$funding_src == 1 | treated$funding_src == 99), 'RTI_treated'] = ave(treated[(treated$funding_src == 1 | treated$funding_src == 99), 'persons_treated_all_funding']
+treated[(treated$funding_src == 1 | treated$funding_src == 99), 'RTI_treated'] = ave(treated[(treated$funding_src == 1 | treated$funding_src == 99), 'persons_treated_all_funding'],
                                                                                      treated[(treated$funding_src == 1 | treated$funding_src == 99),"country_name"], 
                                                                                      treated[(treated$funding_src == 1 | treated$funding_src == 99),"fiscal_year"], 
                                                                                      FUN = sum)
@@ -141,4 +141,3 @@ sch['sch_eval'] = ifelse((sch$assessment_type == 'Schisto evaluation' & sch$asse
 final = merge(sch_out, treated_collapsed, by=c('country_name', 'fiscal_year'), all=TRUE)
 write.csv(final, "C:\\Users\\reowen\\Documents\\Datasets\\SCH_data.csv")
 
-# merge sch_out, treated_collapsed (by country name and FY)
