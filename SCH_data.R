@@ -140,10 +140,10 @@ final = merge(sch_out, treated_collapsed, by=c('country_name', 'fiscal_year'), a
 
 final = final[with(final, order(country_name, fiscal_year)),]
 
-final = reshape(final, 
-                timevar = 'fiscal_year', 
-                idvar = 'country_name', 
-                direction = 'wide')
+# final = reshape(final, 
+#                 timevar = 'fiscal_year', 
+#                 idvar = 'country_name', 
+#                 direction = 'wide')
 
 write.csv(final, "C:\\Users\\reowen\\Documents\\Datasets\\SCH_data.csv")
 
