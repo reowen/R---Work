@@ -37,7 +37,19 @@ treated['USAID_treated'] = ave(treated[,"persons_treated_usaid_funding"],
 
 treated['RTI_treated'] = 0
 
-treated[(treated$funding_src == 1 | treated$funding_src == 99), 'RTI_treated'] = ave(treated[(treated$funding_src == 1 | treated$funding_src == 99),"persons_treated_usaid_funding"], 
+treated[(treated$funding_src == 1 | treated$funding_src == 99), 'RTI_treated'] = ave(treated[(treated$funding_src == 1 | treated$funding_src == 99),"persons_treated_usrti = c(1,99)
+
+sch['rti_evals_conducted'] = 0
+sch[(sch$funding_src %in% rti), 'rti_evals_conducted'] = ave(sch[(sch$funding_src %in% rti), 'sch_eval'],
+                                                             sch[(sch$funding_src %in% rti), 'country_name'],
+                                                             sch[(sch$funding_src %in% rti), 'fiscal_year'], 
+                                                             FUN = sum)
+
+sch['rti_sen_site'] = 0
+sch[(sch$funding_src %in% rti), 'rti_sen_site'] = ave(sch[(sch$funding_src %in% rti), 'sentinel_site'],
+                                                           sch[(sch$funding_src %in% rti), 'country_name'],
+                                                           sch[(sch$funding_src %in% rti), 'fiscal_year'], 
+                                                           FUN = sum)aid_funding"], 
                                                                                      treated[(treated$funding_src == 1 | treated$funding_src == 99),"country_name"], 
                                                                                      treated[(treated$funding_src == 1 | treated$funding_src == 99),"fiscal_year"], 
                                                                                      FUN = sum)
@@ -50,10 +62,14 @@ treated[, 'RTI_treated'] = ave(treated[,"RTI_treated"],
 treated[(treated$country_name == 'Burkina Faso' & treated$fiscal_year == 2011) | (treated$country_name == 'Niger' & treated$fiscal_year == 2011), 
         'RTI_treated'] = 0
 
+keep = c('country_name', 'fiscal_year', 'USAID_treated', 'RTI_treated')
 
-write.csv(treated, "C:\\Users\\reowen\\Documents\\Datasets\\SCH_treatments.csv")
+treated_collapsed = treated[, keep]
+treated_collapsed = unique(treated_collapsed)
 
-rm(master_file, raw, treated, colnames, i, keep)
+write.csv(treated_collapsed, "C:\\Users\\reowen\\Documents\\Datasets\\SCH_treatments.csv")
+
+rm(master_file, raw, treated, colnames, i, keep, treated_collapsed)
 
 ####################
 ##Schisto DSA data##
@@ -64,3 +80,61 @@ me_master = read.csv("C:\\Users\\reowen\\Documents\\Offline Files\\me_master.csv
 colnames = c("country_name", "region_name", "district_name", "fiscal_year", 
              "assessment_type", "funding_src", "assessment_completed")
 
+sch = me_master[((me_master$assessment_type == 'Schisto sentinel site' | me_master$assessment_type == 'Schisto evaluation') & me_master$reporting_period == '2nd SAR (October-September)'),
+                colnames]
+
+sch['sentinel_site'] = ifelse((sch$assessment_type == 'Schisto sentinel site' & sch$assessment_completed == 'yes'), 1, 0)
+sch['sch_eval'] = ifelse((sch$assessment_type == 'Schisto evaluation' & sch$assessment_completed == 'yes'), 1, 0)
+
+usaid = c(1, 2, 3, 4, 5, 99)
+
+sch['USAID_evals_conducted'] = 0
+sch[(sch$funding_src %in% usaid), 'USAID_evals_conducted'] = ave(sch[(sch$funding_src %in% usaid), 'sch_eval'],
+                                                                 sch[(sch$funding_src %in% usaid), 'country_name'],
+                                                                 sch[(sch$funding_src %in% usaid), 'fiscal_year'], 
+                                                                 FUN = sum)
+
+sch['USAID_sen_site'] = 0
+sch[(sch$funding_src %in% usaid), 'USAID_sen_site'] = ave(sch[(sch$funding_src %in% usaid), 'sentinel_site'],
+                                                                 sch[(sch$funding_src %in% usaid), 'country_name'],
+                                                                 sch[(sch$funding_src %in% usaid), 'fiscal_year'], 
+                                                                 FUN = sum)
+
+rti = c(1,99)
+
+sch['rti_evals_conducted'] = 0
+sch[(sch$funding_src %in% rti), 'rti_evals_conducted'] = ave(sch[(sch$funding_src %in% rti), 'sch_eval'],
+                                                             sch[(sch$funding_src %in% rti), 'country_name'],
+                                                             sch[(sch$funding_src %in% rti), 'fiscal_year'], 
+                                                             FUN = sum)
+
+sch['rti_sen_site'] = 0
+sch[(sch$funding_src %in% rti), 'rti_sen_site'] = ave(sch[(sch$funding_src %in% rti), 'sentinel_site'],
+                                                           sch[(sch$funding_src %in% rti), 'country_name'],
+                                                           sch[(sch$funding_src %in% rti), 'fiscal_year'], 
+                                                           FUN = sum)
+
+
+
+keep = c('country_name', 'fiscal_year', 'USAID_evals_conducted', 'USAID_sen_site', 
+         'rti_evals_conducted', 'rti_sen_site')
+
+sch_out = sch[, keep]
+sch_out = unique(sch_out)
+
+write.csv(sch_out, "C:\\Users\\reowen\\Documents\\Datasets\\SCH_evals.csv")
+
+rm(me_master, sch, colnames, keep, usaid)
+
+
+########################
+##Schisto mapping data##
+########################
+
+me_master = read.csv("C:\\Users\\reowen\\Documents\\Offline Files\\mapping.csv")
+
+
+
+
+
+# merge sch_out, treated_collapsed (by country name and FY)
