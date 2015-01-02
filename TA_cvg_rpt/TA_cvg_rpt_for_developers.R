@@ -82,7 +82,8 @@ cvg_final = raw_cvg[, reg_cols]
 me_master = read.csv("C:\\Users\\reowen\\Documents\\Offline Files\\me_master.csv")
 
 colnames = c('country_name', 'region_name', 'district_name', 'applicable_disease',
-             'fiscal_year', 'reporting_period',	'assessment_type', 'assessment_completed')
+             'fiscal_year', 'reporting_period',	'assessment_type', 'assessment_completed', 
+             'action_oriented_conclusion')
 
 dsa = me_master[me_master$reporting_period == '2nd SAR (October-September)', colnames]
 names(dsa)[4] = 'disease'
@@ -104,9 +105,14 @@ dsa['TIS'] = dsa$assessment_type
 dsa[(!(dsa$assessment_type %in% TIS_values) | dsa$assessment_completed != 'yes'), 'TIS'] = NA
 
 
+#Create DSA_results variable
+dsa['DSA_results'] = dsa$action_oriented_conclusion
+dsa[(!(dsa$assessment_type %in% TAS_values | dsa$assessment_type %in% TIS_values) | dsa$assessment_completed != 'yes'), 'DSA_results'] = NA
+
+
 #pull out only relevant indicators to keep
 keep = c('country_name', 'region_name', 'district_name', 'disease',
-         'fiscal_year', 'TAS', 'TIS')
+         'fiscal_year', 'TAS', 'TIS', 'DSA_results')
 
 dsa_final = dsa[, keep]
 
