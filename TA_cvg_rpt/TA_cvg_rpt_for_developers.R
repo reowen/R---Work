@@ -18,7 +18,7 @@ colnames = c("country_name", "region_name", "district_name", "district_global_ta
              "total_pop", "people_living_mda_acheived")
 
 raw = master_file[, colnames]
-rm(master_file)
+# rm(master_file)
 
 for(i in 12:length(colnames)){
   raw[, colnames[i]] = as.numeric(as.character(raw[, colnames[i]]))
@@ -42,15 +42,15 @@ for(country in countries){
   #find latest year by country
   latest_year = max(raw[(raw$country_name == country), 'fiscal_year']) 
   #update latest_year variable with pop from country's latest year
-  raw[(raw$country_name == country & raw$fiscal_year == latest_year), 'most_recent_pop'] = raw[(raw$country_name == country & raw$fiscal_year == latest_year), 'most_recent_pop']
+  raw[(raw$country_name == country & raw$fiscal_year == latest_year), 'most_recent_pop'] = raw[(raw$country_name == country & raw$fiscal_year == latest_year), 'total_pop']
 }
 rm(latest_year)
 
+unique = paste(raw$country_name, raw$region_name, raw$district_name)
 raw['most_recent_pop'] = ave(raw[,'most_recent_pop'], 
-                             raw[,'country_name'], 
-                             raw[,'region_name'],
-                             raw[,'district_name'], 
+                             unique,
                              FUN = max)
+rm(unique)
 
 
 #Create number targeted and treated (all support)
@@ -72,7 +72,7 @@ rm(all_targeted, all_treated)
 ##Condense the dataset to something more manageable##
 #####################################################
 
-keep_cols = c("country_name", "region_name", "district_name", "fiscal_year", "disease", 
+keep_cols = c("country_name", "region_name", "district_name", "fiscal_year", "disease", "most_recent_pop",
               "persons_at_risk", 'targeted', 'treated', "disease_distribution", "people_living_mda_acheived")
 
 # In this particular case, I used only SAR2 due to the context.  However, the script for the
@@ -90,7 +90,7 @@ raw_cvg['epi_cvg'] = round((raw_cvg[,'treated'] / raw_cvg[,'persons_at_risk']), 
 ###Pull out only relevant indicators to keep##
 ##############################################
 
-reg_cols = c('country_name', 'region_name', 'district_name', 'disease', 'fiscal_year',
+reg_cols = c('country_name', 'region_name', 'district_name', 'disease', "most_recent_pop", 'fiscal_year',
              "disease_distribution", 'persons_at_risk', 'targeted', 'treated', 
              'prg_cvg', 'epi_cvg', 'people_living_mda_acheived')
 
@@ -157,7 +157,7 @@ dsa_final = dsa[, keep]
 ###################################################################
 
 # merge dsa_final and cvg_final
-final = merge(dsa_final, cvg_final, 
+final = merge(cvg_final, dsa_final, 
               by=c('country_name', 'region_name', 'district_name', 'disease', 'fiscal_year'), 
               all = TRUE)
 
@@ -165,7 +165,7 @@ final = final[with(final, order(fiscal_year)), ]
 
 final = reshape(final, 
                 timevar = 'fiscal_year', 
-                idvar = c('country_name', 'region_name', 'district_name', 'disease'), 
+                idvar = c('country_name', 'region_name', 'district_name', 'disease', 'most_recent_pop'), 
                 direction = 'wide')
 
 final = final[with(final, order(disease, country_name, region_name, district_name)), ]
