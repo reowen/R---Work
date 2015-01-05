@@ -6,7 +6,7 @@ master_file = read.csv("C:\\Users\\reowen\\Documents\\Offline Files\\master_file
 #columns used in the script
 colnames = c("country_name", "region_name", "district_name", "district_global_task_force_id",
              "fiscal_year", "reporting_period", "disease", "funding_src","funding_src_r1", "funding_src_r2", 
-             "disease_distribution", 
+             "disease_distribution", "total_pop",
              "persons_at_risk", "persons_targeted_usaid_funding", "persons_targeted_all_funding", 
              "persons_targeted_usaid_funding_r1", "persons_targeted_all_funding_r1", "persons_targeted_usaid_funding_r2",
              "persons_targeted_all_funding_r2", "persons_treated_usaid_funding", "persons_treated_all_funding",
@@ -28,6 +28,29 @@ for(i in 12:length(colnames)){
   raw[is.na(raw[,colnames[i]]) == TRUE, colnames[i]] = 0
 }
 rm(colnames)
+
+#Find most recent fiscal year (ENVISION/other separate due to lack of non-ENVISION workplanning)
+ENVISION = c("Benin", "Cameroon", "Democratic Republic of Congo", "Ethiopia", "Guinea", "Haiti", "Indonesia", 
+             "Mali", "Mozambique", "Nepal", "Nigeria", "Senegal", "Sierra Leone", "Tanzania", "Uganda")
+latest_year_ENVISION = max(raw[(raw$country_name %in% ENVISION), 'fiscal_year'])
+latest_year_other = max(raw[!(raw$country_name %in% ENVISION), 'fiscal_year'])
+
+
+countries = levels(raw$country_name)
+raw['most_recent_pop'] = 0
+for(country in countries){
+  #find latest year by country
+  latest_year = max(raw[(raw$country_name == country), 'fiscal_year']) 
+  #update latest_year variable with pop from country's latest year
+  raw[(raw$country_name == country & raw$fiscal_year == latest_year), 'most_recent_pop'] = raw[(raw$country_name == country & raw$fiscal_year == latest_year), 'most_recent_pop']
+}
+rm(latest_year)
+
+raw['most_recent_pop'] = ave(raw[,'most_recent_pop'], 
+                             raw[,'country_name'], 
+                             raw[,'region_name'],
+                             raw[,'district_name'], 
+                             FUN = max)
 
 
 #Create number targeted and treated (all support)
@@ -89,30 +112,43 @@ dsa = me_master[me_master$reporting_period == '2nd SAR (October-September)', col
 names(dsa)[4] = 'disease'
 dsa = dsa[dsa$disease != 'NULL', ]
 
+#code DSA variable
+DSA_values = c('LF TAS: Post-MDA Surveillance I', 'LF TAS: Stop MDA', 
+               'LF Transmission Assessment Survey (TAS)', 'LF TAS: Post-MDA Surveillance II',
+               'Trachoma impact survey', 'Trachoma health impact surveys', 
+               'STH evaluation', 'Schisto evaluation', 'Oncho epidemiological assessment')
 
-#These are valid values for TAS type
-TAS_values = c('LF TAS: Post-MDA Surveillance I', 'LF TAS: Stop MDA', 
-               'LF Transmission Assessment Survey (TAS)', 'LF TAS: Post-MDA Surveillance II')
-
-#TAS column shows the TAS type, only if the assessment has been completed
-dsa['TAS'] = dsa$assessment_type
-dsa[(!(dsa$assessment_type %in% TAS_values) | dsa$assessment_completed != 'yes'), 'TAS'] = NA
-
-#Valid values for a TIS... the 'health impact surveys' one i think is a data entry error
-TIS_values = c('Trachoma impact survey', 'Trachoma health impact surveys')
-
-dsa['TIS'] = dsa$assessment_type
-dsa[(!(dsa$assessment_type %in% TIS_values) | dsa$assessment_completed != 'yes'), 'TIS'] = NA
-
+dsa['DSA'] = dsa$assessment_type
+dsa[(!(dsa$assessment_type %in% DSA_values) | dsa$assessment_completed != 'yes'), 'DSA'] = NA
 
 #Create DSA_results variable
 dsa['DSA_results'] = dsa$action_oriented_conclusion
-dsa[(!(dsa$assessment_type %in% TAS_values | dsa$assessment_type %in% TIS_values) | dsa$assessment_completed != 'yes'), 'DSA_results'] = NA
+dsa[(!(dsa$assessment_type %in% DSA_values) | dsa$assessment_completed != 'yes'), 'DSA_results'] = NA
+
+
+# #These are valid values for TAS type
+# TAS_values = c('LF TAS: Post-MDA Surveillance I', 'LF TAS: Stop MDA', 
+#                'LF Transmission Assessment Survey (TAS)', 'LF TAS: Post-MDA Surveillance II')
+# 
+# #TAS column shows the TAS type, only if the assessment has been completed
+# dsa['TAS'] = dsa$assessment_type
+# dsa[(!(dsa$assessment_type %in% TAS_values) | dsa$assessment_completed != 'yes'), 'TAS'] = NA
+# 
+# #Valid values for a TIS... the 'health impact surveys' one i think is a data entry error
+# TIS_values = c('Trachoma impact survey', 'Trachoma health impact surveys')
+# 
+# dsa['TIS'] = dsa$assessment_type
+# dsa[(!(dsa$assessment_type %in% TIS_values) | dsa$assessment_completed != 'yes'), 'TIS'] = NA
+# 
+# 
+# #Create DSA_results variable
+# dsa['DSA_results'] = dsa$action_oriented_conclusion
+# dsa[(!(dsa$assessment_type %in% TAS_values | dsa$assessment_type %in% TIS_values) | dsa$assessment_completed != 'yes'), 'DSA_results'] = NA
 
 
 #pull out only relevant indicators to keep
 keep = c('country_name', 'region_name', 'district_name', 'disease',
-         'fiscal_year', 'TAS', 'TIS', 'DSA_results')
+         'fiscal_year', 'DSA', 'DSA_results')
 
 dsa_final = dsa[, keep]
 
