@@ -18,7 +18,8 @@ colnames = c("country_name", "region_name", "district_name", "district_global_ta
              "total_pop", "people_living_mda_acheived")
 
 raw = master_file[, colnames]
-# rm(master_file)
+#free up some memory (this takes 45 mb)
+rm(master_file)
 
 for(i in 12:length(colnames)){
   raw[, colnames[i]] = as.numeric(as.character(raw[, colnames[i]]))
