@@ -2,11 +2,10 @@
 #master_file is a .csv version of the mda_demography_decreased-ntd-burden.tab offline file
 master_file = read.csv("C:\\Users\\reowen\\Documents\\Offline Files\\master_file.csv")
 
-
 #columns used in the script
 colnames = c("country_name", "region_name", "district_name", "district_global_task_force_id",
              "fiscal_year", "reporting_period", "disease", "funding_src","funding_src_r1", "funding_src_r2", 
-             "disease_distribution", "total_pop",
+             "disease_distribution", "most_recent_prevalence_results", "total_pop", 
              "persons_at_risk", "persons_targeted_usaid_funding", "persons_targeted_all_funding", 
              "persons_targeted_usaid_funding_r1", "persons_targeted_all_funding_r1", "persons_targeted_usaid_funding_r2",
              "persons_targeted_all_funding_r2", "persons_treated_usaid_funding", "persons_treated_all_funding",
@@ -21,11 +20,11 @@ raw = master_file[, colnames]
 #free up some memory (this takes 45 mb)
 rm(master_file)
 
-for(i in 12:length(colnames)){
+for(i in 13:length(colnames)){
   raw[, colnames[i]] = as.numeric(as.character(raw[, colnames[i]]))
 }
 
-for(i in 12:length(colnames)){
+for(i in 13:length(colnames)){
   raw[is.na(raw[,colnames[i]]) == TRUE, colnames[i]] = 0
 }
 rm(colnames)
@@ -74,7 +73,8 @@ rm(all_targeted, all_treated)
 #####################################################
 
 keep_cols = c("country_name", "region_name", "district_name", "fiscal_year", "disease", "most_recent_pop",
-              "persons_at_risk", 'targeted', 'treated', "disease_distribution", "people_living_mda_acheived")
+              "persons_at_risk", 'targeted', 'treated', "disease_distribution", "people_living_mda_acheived", 
+              "most_recent_prevalence_results")
 
 # In this particular case, I used only SAR2 due to the context.  However, the script for the
 # database would need to pull from most recent submission period for each year.
@@ -92,7 +92,7 @@ raw_cvg['epi_cvg'] = round((raw_cvg[,'treated'] / raw_cvg[,'persons_at_risk']), 
 ##############################################
 
 reg_cols = c('country_name', 'region_name', 'district_name', 'disease', "most_recent_pop", 'fiscal_year',
-             "disease_distribution", 'persons_at_risk', 'targeted', 'treated', 
+             "disease_distribution", 'most_recent_prevalence_results', 'persons_at_risk', 'targeted', 'treated', 
              'prg_cvg', 'epi_cvg', 'people_living_mda_acheived')
 
 cvg_final = raw_cvg[, reg_cols]
