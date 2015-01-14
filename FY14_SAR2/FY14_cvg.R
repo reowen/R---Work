@@ -68,22 +68,87 @@ write.csv(c_level, "C:\\Users\\reowen\\Documents\\Datasets\\FY14_cvg\\FY14_cvg_c
 
 #playing with plots
 
-testkeep = c("country_name", "region_name", "district_name", "fiscal_year", "disease", "prg_cvg")
-test = raw[(raw$country_name == 'Mali'), testkeep]
-test[(test$prg_cvg == 0), 'prg_cvg'] = NA
-
 library(ggplot2)
 
-#density curve for LF
-density <-  ggplot(test[(test$disease == 'LF'),], aes(x=prg_cvg)) + 
+
+# testkeep = c("country_name", "region_name", "district_name", "fiscal_year", "disease", "prg_cvg")
+# test = raw[(raw$country_name == 'Cameroon'), testkeep]
+# test[(test$prg_cvg == 0), 'prg_cvg'] = NA
+# 
+# 
+# 
+# #density curve for LF
+# density <-  ggplot(test[(test$disease == 'STH'),], aes(x=prg_cvg)) + 
+#   geom_density() + 
+#   geom_vline(aes(xintercept=median(prg_cvg, na.rm=T)), color="red", linetype="dashed", size=1)
+# 
+# hist <- ggplot(test[(test$disease == 'LF'),], aes(x=prg_cvg)) + 
+#   geom_histogram(binwidth=.1, colour="black", fill="white") + 
+#   geom_vline(aes(xintercept=median(prg_cvg, na.rm=T)), color="red", linetype="dashed", size=1)
+# 
+# 
+# 
+# #ggsave(filename="cmr_sth_fy14.png", plot=density, path="C:\\Users\\reowen\\Documents\\Datasets\\plots")
+
+
+ENVISION = c("Benin", "Cameroon", "Democratic Republic of Congo", "Ethiopia", "Guinea", "Haiti", "Indonesia", 
+             "Mali", "Mozambique", "Nepal", "Nigeria", "Senegal", "Sierra Leone", "Tanzania", "Uganda")
+
+plotkeep = c("country_name", "region_name", "district_name", "fiscal_year", "disease", "prg_cvg")
+plot = raw[(raw$country_name %in% ENVISION), plotkeep]
+plot[(plot$prg_cvg == 0 | is.nan(plot$prg_cvg)), 'prg_cvg'] = NA
+
+#lf density graph
+lf_density <-  ggplot(plot[(plot$disease == 'LF'),], aes(x=prg_cvg)) + 
   geom_density() + 
-  geom_vline(aes(xintercept=median(prg_cvg, na.rm=T)), color="red", linetype="dashed", size=1)
+  geom_vline(aes(xintercept=median(prg_cvg, na.rm=T)), color="red", linetype="dashed", size=1) +
+  scale_x_continuous(breaks = seq(0, 1.5, by=0.1)) +
+  ggtitle("LF prg_cvg distribution")
 
-hist <- ggplot(test[(test$disease == 'LF'),], aes(x=prg_cvg)) + 
-  geom_histogram(binwidth=.1, colour="black", fill="white") + 
-  geom_vline(aes(xintercept=median(prg_cvg, na.rm=T)), color="red", linetype="dashed", size=1)
-  
+# ggsave(filename="env_lf_fy14.png", plot=lf_density, path="C:\\Users\\reowen\\Documents\\Datasets\\plots")
+
+#oncho density graph
+oncho_density <-  ggplot(plot[(plot$disease == 'Oncho'),], aes(x=prg_cvg)) + 
+  geom_density() + 
+  geom_vline(aes(xintercept=median(prg_cvg, na.rm=T)), color="red", linetype="dashed", size=1) +
+  scale_x_continuous(breaks = seq(0, 1.5, by=0.1)) +
+  ggtitle("Oncho prg_cvg distribution")
+
+# ggsave(filename="env_oncho_fy14.png", plot=oncho_density, path="C:\\Users\\reowen\\Documents\\Datasets\\plots")
+
+#sth density graph
+sth_density <-  ggplot(plot[(plot$disease == 'STH'),], aes(x=prg_cvg)) + 
+  geom_density() + 
+  geom_vline(aes(xintercept=median(prg_cvg, na.rm=T)), color="red", linetype="dashed", size=1) +
+  scale_x_continuous(breaks = seq(0, 3, by=0.2)) +
+  ggtitle("STH prg_cvg distribution")
+
+# ggsave(filename="env_sth_fy14.png", plot=sth_density, path="C:\\Users\\reowen\\Documents\\Datasets\\plots")
+
+#schisto density graph
+sch_density <-  ggplot(plot[(plot$disease == 'Schisto'),], aes(x=prg_cvg)) + 
+  geom_density() + 
+  geom_vline(aes(xintercept=median(prg_cvg, na.rm=T)), color="red", linetype="dashed", size=1) +
+  scale_x_continuous(breaks = seq(0, 3, by=0.1)) +
+  ggtitle("Schisto prg_cvg distribution")
+
+# ggsave(filename="env_sch_fy14.png", plot=sch_density, path="C:\\Users\\reowen\\Documents\\Datasets\\plots")
+
+#trachoma density graph
+tra_density <-  ggplot(plot[(plot$disease == 'Trachoma'),], aes(x=prg_cvg)) + 
+  geom_density() + 
+  geom_vline(aes(xintercept=median(prg_cvg, na.rm=T)), color="red", linetype="dashed", size=1) +
+  scale_x_continuous(breaks = seq(0, 3, by=0.1)) +
+  ggtitle("Trachoma prg_cvg distribution")
+
+# ggsave(filename="env_tra_fy14.png", plot=tra_density, path="C:\\Users\\reowen\\Documents\\Datasets\\plots")
 
 
+p = list(lf_density, oncho_density, sch_density, sth_density, tra_density)
 
-
+library(gridExtra)
+pdf('C:\\Users\\reowen\\Documents\\Datasets\\plots\\envision_fy14.pdf', onefile = TRUE)
+for (i in seq(length(p))) {
+  do.call("grid.arrange", p[i])
+}
+dev.off()

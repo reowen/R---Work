@@ -53,19 +53,25 @@ raw['most_recent_pop'] = ave(raw[,'most_recent_pop'],
 rm(unique)
 
 
-#Create number targeted and treated (all support)
+#create number targeted and treated (usaid support)
 
-#To calculated the treated and targeted columns:
-#Take the max of the columns specified in "all_targeted" and "all_treated" vectors
-all_targeted = c("persons_targeted_all_funding", "persons_targeted_all_funding_r1", "persons_targeted_all_funding_r2", 
-                 "persons_targeted_usaid_funding", "persons_targeted_usaid_funding_r1", "persons_targeted_usaid_funding_r2")
-all_treated = c("persons_treated_all_funding", "persons_treated_all_funding_r1", "persons_treated_all_funding_r2", 
-                "persons_treated_usaid_funding", "persons_treated_usaid_funding_r1", "persons_treated_usaid_funding_r2")
+usaid_targeted = c("persons_targeted_usaid_funding", "persons_targeted_usaid_funding_r1", "persons_targeted_usaid_funding_r2")
+usaid_treated = c("persons_treated_usaid_funding", "persons_treated_usaid_funding_r1","persons_treated_usaid_funding_r2")
 
-#note these are the max values across persons targeted, persons targeted r1 and r2
-raw['targeted'] = apply(raw[, all_targeted], 1, max)
-raw['treated'] = apply(raw[, all_treated], 1, max)
-rm(all_targeted, all_treated)
+raw['usaid_targeted'] = apply(raw[, usaid_targeted], 1, max)
+raw['usaid_treated'] = apply(raw[, usaid_treated], 1, max)
+rm(usaid_targeted, usaid_treated)
+
+#create SAC treated variable
+
+sac_targeted = c("sac_targeted_with_usaid_support", "sac_targeted_with_usaid_support_r1", 
+                 "sac_targeted_with_usaid_support_r2")
+
+sac_treated = c("sac_treated_usaid_funding", "sac_treated_usaid_funding_r1", "sac_treated_usaid_funding_r2")
+
+raw['sac_targeted'] = apply(raw[, sac_targeted], 1, max)
+raw['sac_treated'] = apply(raw[, sac_treated], 1, max)
+rm(sac_targeted, sac_treated)
 
 
 #######################################################
@@ -73,8 +79,8 @@ rm(all_targeted, all_treated)
 #######################################################
 
 keep_cols = c("country_name", "region_name", "district_name", "fiscal_year", "disease", "most_recent_pop",
-              "persons_at_risk", 'targeted', 'treated', "disease_distribution", "people_living_mda_acheived", 
-              "most_recent_prevalence_results")
+              "persons_at_risk", 'sac_at_risk', 'usaid_targeted', 'usaid_treated','sac_targeted', 'sac_treated',
+              "disease_distribution", "people_living_mda_acheived", "most_recent_prevalence_results")
 
 # In this particular case, I used only SAR2 due to the context.  However, the script for the
 # database would need to pull from most recent submission period for each year.
@@ -82,18 +88,21 @@ raw_cvg = raw[raw$reporting_period == '2nd SAR (October-September)', keep_cols]
 rm(raw, keep_cols)
 
 #Code program coverage variable
-raw_cvg['prg_cvg'] = round((raw_cvg[, 'treated'] / raw_cvg[, 'targeted']), digits=4)
+raw_cvg['prg_cvg'] = round((raw_cvg[, 'usaid_treated'] / raw_cvg[, 'usaid_targeted']), digits=4)
+raw_cvg['sac_prg_cvg'] = round((raw_cvg[, 'sac_treated'] / raw_cvg[, 'sac_targeted']), digits=4)
 
 #Code epi coverage variable
-raw_cvg['epi_cvg'] = round((raw_cvg[,'treated'] / raw_cvg[,'persons_at_risk']), digits=4)
+raw_cvg['epi_cvg'] = round((raw_cvg[,'usaid_treated'] / raw_cvg[,'persons_at_risk']), digits=4)
+raw_cvg['sac_epi_cvg'] = round((raw_cvg[,'sac_treated'] / raw_cvg[,'sac_at_risk']), digits=4)
 
 ################################################
 ### Pull out only relevant indicators to keep ##
 ################################################
 
 reg_cols = c('country_name', 'region_name', 'district_name', 'disease', "most_recent_pop", 'fiscal_year',
-             "disease_distribution", 'most_recent_prevalence_results', 'persons_at_risk', 'targeted', 'treated', 
-             'prg_cvg', 'epi_cvg', 'people_living_mda_acheived')
+             "disease_distribution", 'most_recent_prevalence_results', 'persons_at_risk', 'sac_at_risk', 
+             'usaid_targeted', 'usaid_treated', 'sac_targeted', 'sac_treated', 'prg_cvg', 'sac_prg_cvg', 
+             'epi_cvg', 'sac_epi_cvg', 'people_living_mda_acheived')
 
 cvg_final = raw_cvg[, reg_cols]
 
@@ -164,6 +173,8 @@ final = merge(cvg_final, dsa_final,
 
 final = final[with(final, order(fiscal_year)), ]
 
+write.csv(final, "C:\\Users\\reowen\\Documents\\Datasets\\mda_cvg_report_usaid_long.csv")
+
 final = reshape(final, 
                 timevar = 'fiscal_year', 
                 idvar = c('country_name', 'region_name', 'district_name', 'disease', 'most_recent_pop'), 
@@ -171,4 +182,4 @@ final = reshape(final,
 
 final = final[with(final, order(disease, country_name, region_name, district_name)), ]
 
-write.csv(final, "C:\\Users\\reowen\\Documents\\Datasets\\mda_cvg_report.csv")
+write.csv(final, "C:\\Users\\reowen\\Documents\\Datasets\\mda_cvg_report_usaid_wide.csv")
