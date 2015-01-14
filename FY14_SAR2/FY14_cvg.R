@@ -51,8 +51,6 @@ raw[is.nan(raw$sac_cvg), 'sac_cvg'] = 0
 raw['sac_cvg_pass'] = ifelse(raw$sac_cvg >= 0.8, 1, 0)
 
 
-
-
 keep = c("country_name", "region_name", "district_name", "fiscal_year", "disease", 
          "treated", "cvg_pass", "if_sac_treated", "sac_cvg_pass")
 final = raw[, keep]
@@ -66,4 +64,26 @@ c_level = ddply(final, c("country_name", "disease"), summarise,
                 sac_treated = sum(if_sac_treated), 
                 sac_pass_cvg = sum(sac_cvg_pass))
 write.csv(c_level, "C:\\Users\\reowen\\Documents\\Datasets\\FY14_cvg\\FY14_cvg_country.csv")
+
+
+#playing with plots
+
+testkeep = c("country_name", "region_name", "district_name", "fiscal_year", "disease", "prg_cvg")
+test = raw[(raw$country_name == 'Mali'), testkeep]
+test[(test$prg_cvg == 0), 'prg_cvg'] = NA
+
+library(ggplot2)
+
+#density curve for LF
+density <-  ggplot(test[(test$disease == 'LF'),], aes(x=prg_cvg)) + 
+  geom_density() + 
+  geom_vline(aes(xintercept=median(prg_cvg, na.rm=T)), color="red", linetype="dashed", size=1)
+
+hist <- ggplot(test[(test$disease == 'LF'),], aes(x=prg_cvg)) + 
+  geom_histogram(binwidth=.1, colour="black", fill="white") + 
+  geom_vline(aes(xintercept=median(prg_cvg, na.rm=T)), color="red", linetype="dashed", size=1)
+  
+
+
+
 
