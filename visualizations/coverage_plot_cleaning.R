@@ -187,7 +187,7 @@ country = ddply(district, c('country_name', 'disease', 'fiscal_year'), summarize
                 usaid_targeted = sum(usaid_targeted), 
                 usaid_treated = sum(usaid_treated))
 
-rm(cvg_final, dsa, dsa_final, me_master, raw_cvg, DSA_values, colnames, countries, country, i, keep, 
+rm(cvg_final, dsa, dsa_final, me_master, raw_cvg, DSA_values, colnames, countries, i, keep, 
    latest_year_ENVISION, latest_year_other, reg_cols)
 
 
