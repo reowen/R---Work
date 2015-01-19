@@ -9,7 +9,7 @@ library(gridExtra)
 ### portfolio-level density plots ###
 #####################################
 
-plot <- district[(district$country_name %in% ENVISION), ]
+plot <- district[(district$country_name %in% ENVISION & district$fiscal_year == 2014), ]
 plot[(plot$prg_cvg == 0 | is.nan(plot$prg_cvg)), 'prg_cvg'] <- NA
 
 #lf density graph
@@ -37,7 +37,7 @@ sth_density <-  ggplot(plot[(plot$disease == 'STH'),], aes(x=prg_cvg)) +
 sch_density <-  ggplot(plot[(plot$disease == 'Schisto'),], aes(x=prg_cvg)) + 
   geom_density() + 
   geom_vline(aes(xintercept=median(prg_cvg, na.rm=T)), color="red", linetype="dashed", size=1) +
-  scale_x_continuous(breaks = seq(0, 2, by=0.2), limits = c(0,2)) +
+  scale_x_continuous(breaks = seq(0, 2, by=0.2), limits = c(0, 1.6)) +
   ggtitle("Schisto prg_cvg distribution")
 
 #trachoma density graph
@@ -49,13 +49,49 @@ tra_density <-  ggplot(plot[(plot$disease == 'Trachoma'),], aes(x=prg_cvg)) +
 
 # Save plots to pdf
 p = list(lf_density, oncho_density, sch_density, sth_density, tra_density)
-pdf('outputs\\envision_fy14.pdf', onefile = TRUE)
+pdf('outputs\\envision_density.pdf', onefile = TRUE)
+for (i in seq(length(p))) {
+  do.call("grid.arrange", p[i])
+}
+dev.off()
+rm(p, lf_density, sch_density, oncho_density, sth_density, tra_density)
+
+
+#########################
+### fun with boxplots ###
+#########################
+
+p <- list()
+
+# boxplot comparing all ENVISION countries' coverage distributions
+bp <- ggplot(plot[(plot$disease == 'LF'),], aes(x=country_name, y=prg_cvg)) + 
+  geom_boxplot() + 
+  scale_y_continuous(breaks = seq(0, 2, by=0.1), limits = c(0, 1.5)) + 
+  geom_hline(aes(yintercept=0.8), color="red", linetype="dashed", size=1) + 
+  coord_flip() + 
+  labs(title = 'LF Program Coverage Distributions, FY14 ENVISION', 
+       x = '', 
+       y = 'Program Coverage')
+
+p[[length(p) + 1]] <- bp
+
+mali <- plot[plot$country_name == 'Mali', ]
+# boxplot comparing coverage across diseases, Mali
+bp <- ggplot(mali, aes(x=disease, y=prg_cvg)) + 
+  geom_boxplot() + 
+  scale_y_continuous(breaks = seq(0, 2, by=0.1), limits = c(0, 1.1)) + 
+  geom_hline(aes(yintercept=0.8), color="red", linetype="dashed", size=1) + 
+  coord_flip() + 
+  labs(title = 'Program Coverage Distributions, FY14 Mali', 
+       x = '', 
+       y = 'Program Coverage')
+
+p[[length(p) + 1]] <- bp
+
+pdf('outputs\\boxplots.pdf', onefile = TRUE)
 for (i in seq(length(p))) {
   do.call("grid.arrange", p[i])
 }
 dev.off()
 
-
-# plot FY14
-plot14 <- final[final$fiscal_year == 2014,]
-
+rm(bp, p, i)
