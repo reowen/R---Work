@@ -90,4 +90,45 @@ rm(vars, i)
 ######## code the district-level dataset #######
 ################################################
 
+unique = paste(raw_cvg$country_name, raw_cvg$region_name, raw_cvg$district_name, raw_cvg$disease)
+
+raw_cvg['times_treated'] = ave(raw_cvg[,'usaid_treated'], 
+                               unique, 
+                               FUN = function(x) sum(x > 0))
+
+raw_cvg['min_prg_cvg'] = ave(raw_cvg[,'prg_cvg'], 
+                             unique,
+                             FUN = function(x) min(x, na.rm=TRUE))
+
+raw_cvg['max_prg_cvg'] = ave(raw_cvg[,'prg_cvg'], 
+                             unique,
+                             FUN = function(x) max(x, na.rm=TRUE))
+
+raw_cvg['count_below_epi_threshold'] = ave(raw_cvg[,'epi_cvg'], 
+                                           unique, 
+                                           FUN = function(x) sum(x < 0.65, na.rm=TRUE))
+
+raw_cvg['count_above_epi_threshold'] = ave(raw_cvg[,'epi_cvg'], 
+                                           unique, 
+                                           FUN = function(x) sum(x >= 0.65, na.rm=TRUE))
+
+unique = paste(raw_cvg$country_name, raw_cvg$region_name, raw_cvg$district_name, raw_cvg$fiscal_year)
+raw_cvg['average_cvg'] = ave(raw_cvg[,'prg_cvg'], 
+                             unique,
+                             FUN = function(x) mean(x, na.rm=TRUE))
+rm(unique)
+
+vars = c('min_prg_cvg', 'max_prg_cvg', 'times_treated', 'count_below_epi_threshold', 
+         'count_above_epi_threshold', 'average_cvg')
+for(i in 1:length(vars)){
+  raw_cvg[(is.nan(raw_cvg[, vars[i]]) | is.infinite(raw_cvg[, vars[i]])), vars[i]] <- NA
+}
+rm(vars, i)
+
+#####################################
+### create district-level dataset ###
+#####################################
+
+
+
 
