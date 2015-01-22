@@ -1,3 +1,4 @@
+library(ggplot2)
 
 #master_file is a .csv version of the mda_demography_decreased-ntd-burden.tab offline file
 master_file = read.csv("C:\\Users\\reowen\\Documents\\Offline Files\\master_file.csv")
@@ -146,28 +147,28 @@ district = district[with(district, order(fiscal_year)), ]
 #                     idvar = c("country_name", "region_name", "district_name", "disease", "times_treated", 
 #                               "min_prg_cvg", "max_prg_cvg", "count_below_epi_threshold", "count_above_epi_threshold"), 
 #                     direction = 'wide')
-
+# 
 # write.csv(district2, 'district2.csv')
 
 library(reshape)
-district = melt(district, id=c("country_name", "region_name", "district_name", "disease", "fiscal_year", "times_treated", 
+district2 = melt(district, id=c("country_name", "region_name", "district_name", "disease", "fiscal_year", "times_treated", 
                                 "min_prg_cvg", "max_prg_cvg", "count_below_epi_threshold", "count_above_epi_threshold"))
 
-district = cast(district, ... ~ variable + fiscal_year)
+district2 = cast(district2, ... ~ variable + fiscal_year)
 
 # write.csv(district, 'Datasets\\cvg_analysis\\district.csv')
 
 
 
-#save excel workbook, multi-tabs
-library(xlsx)
-cvg_analysis = createWorkbook()
-
-country_tab = createSheet(wb=cvg_analysis, sheetName="Country")
-district_tab = createSheet(wb=cvg_analysis, sheetName="District")
-
-addDataFrame(x=country, sheet=country_tab)
-addDataFrame(x=district, sheet=district_tab)
-
-saveWorkbook(cvg_analysis, "Datasets\\cvg_analysis\\cvg_analysis.xlsx")
-rm(country_tab, cvg_analysis, district_tab)
+# #save excel workbook, multi-tabs
+# library(xlsx)
+# cvg_analysis = createWorkbook()
+# 
+# country_tab = createSheet(wb=cvg_analysis, sheetName="Country")
+# district_tab = createSheet(wb=cvg_analysis, sheetName="District")
+# 
+# addDataFrame(x=country, sheet=country_tab)
+# addDataFrame(x=district2, sheet=district_tab)
+# 
+# saveWorkbook(cvg_analysis, "Datasets\\cvg_analysis\\cvg_analysis.xlsx")
+# rm(country_tab, cvg_analysis, district_tab)
