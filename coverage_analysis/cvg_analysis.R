@@ -86,7 +86,7 @@ for(i in 1:length(vars)){
 }
 rm(vars, i)
 
-write.csv(country, 'Datasets\\cvg_analysis\\country.csv')
+# write.csv(country, 'Datasets\\cvg_analysis\\country.csv')
 
 ################################################
 ######## code the district-level dataset #######
@@ -155,6 +155,19 @@ district = melt(district, id=c("country_name", "region_name", "district_name", "
 
 district = cast(district, ... ~ variable + fiscal_year)
 
-write.csv(district, 'Datasets\\cvg_analysis\\district.csv')
+# write.csv(district, 'Datasets\\cvg_analysis\\district.csv')
 
 
+
+#save excel workbook, multi-tabs
+library(xlsx)
+cvg_analysis = createWorkbook()
+
+country_tab = createSheet(wb=cvg_analysis, sheetName="Country")
+district_tab = createSheet(wb=cvg_analysis, sheetName="District")
+
+addDataFrame(x=country, sheet=country_tab)
+addDataFrame(x=district, sheet=district_tab)
+
+saveWorkbook(cvg_analysis, "Datasets\\cvg_analysis\\cvg_analysis.xlsx")
+rm(country_tab, cvg_analysis, district_tab)
