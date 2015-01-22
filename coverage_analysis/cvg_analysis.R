@@ -86,6 +86,8 @@ for(i in 1:length(vars)){
 }
 rm(vars, i)
 
+write.csv(country, 'Datasets\\cvg_analysis\\country.csv')
+
 ################################################
 ######## code the district-level dataset #######
 ################################################
@@ -125,6 +127,7 @@ for(i in 1:length(vars)){
 }
 rm(vars, i)
 
+
 #####################################
 ### create district-level dataset ###
 #####################################
@@ -134,19 +137,24 @@ cols = c("country_name", "region_name", "district_name", "disease", "fiscal_year
          "prg_cvg", "average_cvg")
 
 district = raw_cvg[, cols]
+rm(cols)
 
 district = district[with(district, order(fiscal_year)), ]
 
-district = reshape(district, 
-                   timevar = 'fiscal_year', 
-                   idvar = c("country_name", "region_name", "district_name", "disease", "times_treated", 
-                             "min_prg_cvg", "max_prg_cvg", "count_below_epi_threshold", "count_above_epi_threshold"), 
-                   direction = 'wide')
+# district2 = reshape(district, 
+#                     timevar = 'fiscal_year', 
+#                     idvar = c("country_name", "region_name", "district_name", "disease", "times_treated", 
+#                               "min_prg_cvg", "max_prg_cvg", "count_below_epi_threshold", "count_above_epi_threshold"), 
+#                     direction = 'wide')
 
-# library(reshape)
-# district2 = melt(district, id=c("country_name", "region_name", "district_name", "disease", "fiscal_year", "times_treated", 
-#                                 "min_prg_cvg", "max_prg_cvg", "count_below_epi_threshold", "count_above_epi_threshold"))
-# 
-# district3 = cast(district, ... ~ prg_cvg + average_cvg)
+# write.csv(district2, 'district2.csv')
+
+library(reshape)
+district = melt(district, id=c("country_name", "region_name", "district_name", "disease", "fiscal_year", "times_treated", 
+                                "min_prg_cvg", "max_prg_cvg", "count_below_epi_threshold", "count_above_epi_threshold"))
+
+district = cast(district, ... ~ variable + fiscal_year)
+
+write.csv(district, 'Datasets\\cvg_analysis\\district.csv')
 
 
