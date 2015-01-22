@@ -1,4 +1,4 @@
-
+AUTHOR <- 'Russell Owen'
 COUNTRY <- 'Mali'
 FY <- 2014
 DISEASE <- 'LF'
@@ -19,7 +19,7 @@ rm(unique)
 
 cdata <- district[(district$country_name == COUNTRY & district$fiscal_year == FY & district$disease == DISEASE), ]
 
-hist <-  ggplot(cdata, aes(x=prg_cvg)) + 
+cvg_hist <-  ggplot(cdata, aes(x=prg_cvg)) + 
   geom_histogram(binwidth=.1, colour="black", fill="white") +
   geom_vline(aes(xintercept=median(prg_cvg, na.rm=T)), color="red", linetype="dashed", size=1) +
   scale_x_continuous(breaks = seq(0, 1.5, by=0.1), limits = c(0,1.5)) + 
@@ -54,18 +54,22 @@ hundred_plus <- hundred_plus[!(is.na(hundred_plus$country_name)), c('region_name
 hundred_plus <- hundred_plus[with(hundred_plus, order(prg_cvg)), ]
 
 
-library(gridExtra)
-pdf('output\\table.pdf', height=11, width=8.5)
-# grid.arrange(hist)
-grid.table(under_60, gp=gpar(fontsize=8))
-grid.table(sixty_to_eighty, gp=gpar(fontsize=8))
-dev.off()
+# library(gridExtra)
+# pdf('output\\table.pdf', height=11, width=8.5)
+# # grid.arrange(hist)
+# grid.table(under_60, gp=gpar(fontsize=8))
+# grid.table(sixty_to_eighty, gp=gpar(fontsize=8))
+# dev.off()
 
 
-# # For use in Knitr
-# 
+# # # For use in Knitr
+# # 
 # library(xtable)
 # under_60.table <- xtable(under_60)
-# print(under_60.table, include.rownames=FALSE)
+# sixty_to_eighty.table <- xtable(under_60)
+# eighty_to_100.table <- xtable(eighty_to_100)
+# hundred_plus.table <- xtable(hundred_plus)
+# 
+# # print(under_60.table, include.rownames=FALSE)
 
 

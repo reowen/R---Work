@@ -1,29 +1,49 @@
 \documentclass{article}
 
-<< echo=FALSE >>=
-AUTHOR <- 'Russell Owen'
-COUNTRY <- 'Mali'
-DISEASE <- 'LF'
-FY <- 2014
+
+<<setup, echo=FALSE, results='hide', message=FALSE, warning=FALSE >>=
+require(xtable)
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
+@
+
+<<external-code, cache=FALSE >>=
+source('cvg_analysis_plots.R')
 @
 
 \begin{document}
-\title{Country Coverage Snapshot: \Sexpr{COUNTRY}, FY: \Sexpr{FY}}
+\title{\Sexpr{DISEASE} Coverage Snapshot: \Sexpr{COUNTRY}, FY \Sexpr{FY}}
 \author{\Sexpr{AUTHOR}}
 \maketitle
 
-Below is a histogram showing the program coverage distribution for \Sexpr{DISEASE} in \Sexpr{COUNTRY}, FY \Sexpr{FY}
+\Sexpr{DISEASE} Program Coverage distribution: \Sexpr{COUNTRY}, FY \Sexpr{FY}
 
-<< echo=FALSE >>=
-ggplot(district[(district$country_name == COUNTRY & district$fiscal_year == FY & district$disease == DISEASE),], aes(x=prg_cvg)) + 
-  geom_histogram(binwidth=.1, colour="black", fill="white") +
-  geom_vline(aes(xintercept=median(prg_cvg, na.rm=T)), color="red", linetype="dashed", size=1) +
-  scale_x_continuous(breaks = seq(0, 1.5, by=0.1), limits = c(0,1.5)) +
-  ggtitle(paste(DISEASE, 'Program Coverage Distribution'))
+<<histogram >>=
+cvg_hist
 @
 
 
+% \newpage
 
+% \begin{landscape}
+Districts with coverage under 60 percent
+<<under60, results='asis' >>=
+print(xtable(under_60), include.rownames=FALSE, floating=TRUE)
+@
 
+Districts with coverage between 60 and 80 percent
+<<sixtytoeighty, results='asis' >>=
+print(xtable(sixty_to_eighty), include.rownames=FALSE, floating=TRUE)
+@
+
+Districts with coverage between 80 and 100 percent
+<<eightyto100, results='asis' >>=
+print(xtable(eighty_to_100), include.rownames=FALSE, floating=TRUE)
+@
+
+Districts with coverage above 100 percent
+<<hundredplus, results='asis' >>=
+print(xtable(hundred_plus), include.rownames=FALSE, floating=TRUE)
+@
+% \end{landscape}
 
 \end{document}
