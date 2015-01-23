@@ -1,4 +1,3 @@
-AUTHOR <- 'Russell Owen'
 COUNTRY <- 'Cameroon'
 FY <- 2014
 DISEASE <- 'STH'
