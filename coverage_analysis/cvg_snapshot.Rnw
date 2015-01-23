@@ -1,5 +1,5 @@
 \documentclass{article}
-
+\usepackage{pdflscape}
 
 <<setup, echo=FALSE, results='hide', message=FALSE, warning=FALSE >>=
 require(xtable)
@@ -15,35 +15,41 @@ source('cvg_analysis_plots.R')
 \author{\Sexpr{AUTHOR}}
 \maketitle
 
-\Sexpr{DISEASE} Program Coverage distribution: \Sexpr{COUNTRY}, FY \Sexpr{FY}
-
 <<histogram >>=
 cvg_hist
 @
 
+\begin{landscape}
 
-% \newpage
-
-% \begin{landscape}
-Districts with coverage under 60 percent
 <<under60, results='asis' >>=
-print(xtable(under_60), include.rownames=FALSE, floating=TRUE)
+print(xtable(under_60, caption = 'Districts with program coverage below 60 percent'), 
+      include.rownames = FALSE, 
+      caption.placement = "top", 
+      floating = TRUE)
 @
 
-Districts with coverage between 60 and 80 percent
+
 <<sixtytoeighty, results='asis' >>=
-print(xtable(sixty_to_eighty), include.rownames=FALSE, floating=TRUE)
+print(xtable(sixty_to_eighty, caption = "Districts with program coverage between 60 and 80 percent"), 
+      include.rownames = FALSE, 
+      caption.placement = "top", 
+      floating = TRUE)
 @
 
-Districts with coverage between 80 and 100 percent
 <<eightyto100, results='asis' >>=
-print(xtable(eighty_to_100), include.rownames=FALSE, floating=TRUE)
+print(xtable(eighty_to_100, caption = 'Distriction with program coverage between 80 and 100 percent'), 
+      include.rownames = FALSE,
+      caption.placement = "top", 
+      floating = TRUE)
 @
 
-Districts with coverage above 100 percent
 <<hundredplus, results='asis' >>=
-print(xtable(hundred_plus), include.rownames=FALSE, floating=TRUE)
+print(xtable(hundred_plus, caption = "Districts with program coverage above 100 percent"), 
+      include.rownames = FALSE, 
+      caption.placement = "top",
+      floating = TRUE)
 @
-% \end{landscape}
+
+\end{landscape}
 
 \end{document}
