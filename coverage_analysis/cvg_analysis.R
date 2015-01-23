@@ -1,4 +1,3 @@
-library(ggplot2)
 
 #master_file is a .csv version of the mda_demography_decreased-ntd-burden.tab offline file
 master_file = read.csv("C:\\Users\\reowen\\Documents\\Offline Files\\master_file.csv")
@@ -13,7 +12,7 @@ colnames = c("country_name", "region_name", "district_name", "fiscal_year", "rep
 
 raw = master_file[, colnames]
 #free up some memory (this takes 45 mb)
-# rm(master_file)
+rm(master_file)
 
 for(i in 7:length(colnames)){
   raw[, colnames[i]] = as.numeric(as.character(raw[, colnames[i]]))
@@ -159,16 +158,37 @@ district2 = cast(district2, ... ~ variable + fiscal_year)
 # write.csv(district, 'Datasets\\cvg_analysis\\district.csv')
 
 
-
-# #save excel workbook, multi-tabs
+# #######################################
+# ### save excel workbook, multi-tabs ###
+# #######################################
+# 
+# lf_district <- district2[district2$disease == 'LF', ]
+# oncho_district <- district2[district2$disease == 'Oncho', ]
+# sch_district <- district2[district2$disease == 'Schisto', ]
+# sth_district <- district2[district2$disease == 'STH', ]
+# tra_district <- district2[district2$disease == 'Trachoma', ]
+# 
+# 
 # library(xlsx)
 # cvg_analysis = createWorkbook()
 # 
 # country_tab = createSheet(wb=cvg_analysis, sheetName="Country")
-# district_tab = createSheet(wb=cvg_analysis, sheetName="District")
+# # district_tab = createSheet(wb=cvg_analysis, sheetName="District")
+# lf = createSheet(wb=cvg_analysis, sheetName="lf")
+# oncho = createSheet(wb=cvg_analysis, sheetName="oncho")
+# sch = createSheet(wb=cvg_analysis, sheetName="sch")
+# sth = createSheet(wb=cvg_analysis, sheetName="sth")
+# trachoma = createSheet(wb=cvg_analysis, sheetName="trachoma")
 # 
 # addDataFrame(x=country, sheet=country_tab)
-# addDataFrame(x=district2, sheet=district_tab)
+# # addDataFrame(x=district2, sheet=district_tab)
+# addDataFrame(x=lf_district, sheet=lf)
+# addDataFrame(x=oncho_district, sheet=oncho)
+# addDataFrame(x=sch_district, sheet=sch)
+# addDataFrame(x=sth_district, sheet=sth)
+# addDataFrame(x=tra_district, sheet=trachoma)
+# 
 # 
 # saveWorkbook(cvg_analysis, "Datasets\\cvg_analysis\\cvg_analysis.xlsx")
-# rm(country_tab, cvg_analysis, district_tab)
+# rm(country_tab, cvg_analysis, district_tab, lf_district, oncho_district, sch_district, sth_district, tra_district, 
+#    lf, oncho, sch, sth, trachoma)

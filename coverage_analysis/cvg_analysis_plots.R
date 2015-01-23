@@ -4,6 +4,7 @@ FY <- 2014
 DISEASE <- 'LF'
 
 #####
+library(ggplot2)
 
 setwd("C:\\Users\\reowen\\Documents\\Coding\\R_Scripts\\coverage_analysis")
 source('cvg_analysis.R')
