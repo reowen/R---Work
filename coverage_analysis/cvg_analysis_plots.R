@@ -56,6 +56,11 @@ hundred_plus <- hundred_plus[!(is.na(hundred_plus$country_name)), c('region_name
 hundred_plus <- hundred_plus[with(hundred_plus, order(prg_cvg)), ]
 
 
+### country-level snapshot table
+# the t() transposes the dataset to flip columns and rows
+c_snap <- t(country[(country$country_name == COUNTRY & country$fiscal_year == FY & country$disease == DISEASE), ])
+
+
 # library(gridExtra)
 # pdf('output\\table.pdf', height=11, width=8.5)
 # # grid.arrange(hist)

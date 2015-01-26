@@ -78,9 +78,11 @@ country <- ddply(raw_cvg, c('country_name', 'disease', 'fiscal_year'), summarize
                  min_cvg = min(prg_cvg, na.rm=TRUE), 
                  max_cvg = max(prg_cvg, na.rm=TRUE), 
                  median_cvg = median(prg_cvg, na.rm=TRUE), 
-                 mean_cvg = mean(prg_cvg, na.rm=TRUE))
+                 mean_cvg = mean(prg_cvg, na.rm=TRUE), 
+                 total_treated = sum(prg_cvg > 0, na.rm=TRUE), 
+                 total_endemic = sum(persons_at_risk > 0, na.rm=TRUE))
 
-vars = c('min_cvg', 'max_cvg', 'median_cvg', 'mean_cvg')
+vars = c('min_cvg', 'max_cvg', 'median_cvg', 'mean_cvg', 'total_treated', 'total_endemic')
 for(i in 1:length(vars)){
   country[(is.nan(country[, vars[i]]) | is.infinite(country[, vars[i]])), vars[i]] <- NA
 }
