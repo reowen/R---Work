@@ -22,7 +22,7 @@ cdata <- district[(district$country_name == COUNTRY & district$fiscal_year == FY
 cvg_hist <-  ggplot(cdata, aes(x=prg_cvg)) + 
   geom_histogram(binwidth=.1, colour="black", fill="white") +
   geom_vline(aes(xintercept=median(prg_cvg, na.rm=T)), color="red", linetype="dashed", size=1) +
-  scale_x_continuous(breaks = seq(0, 1.5, by=0.1), limits = c(0,1.5)) + 
+  scale_x_continuous(breaks = round(seq(0, (max(cdata$prg_cvg, na.rm=TRUE) + 0.1), by=0.1), 1)) + 
   labs(title = paste(DISEASE, 'Program Coverage:', COUNTRY, 'FY', FY),
        x = 'Program Coverage', 
        y = '# districts')

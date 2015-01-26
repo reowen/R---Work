@@ -141,19 +141,11 @@ rm(cols)
 
 district = district[with(district, order(fiscal_year)), ]
 
-# district2 = reshape(district, 
-#                     timevar = 'fiscal_year', 
-#                     idvar = c("country_name", "region_name", "district_name", "disease", "times_treated", 
-#                               "min_prg_cvg", "max_prg_cvg", "count_below_epi_threshold", "count_above_epi_threshold"), 
-#                     direction = 'wide')
+# library(reshape)
+# district2 = melt(district, id=c("country_name", "region_name", "district_name", "disease", "fiscal_year", "times_treated", 
+#                                 "min_prg_cvg", "max_prg_cvg", "count_below_epi_threshold", "count_above_epi_threshold"))
 # 
-# write.csv(district2, 'district2.csv')
-
-library(reshape)
-district2 = melt(district, id=c("country_name", "region_name", "district_name", "disease", "fiscal_year", "times_treated", 
-                                "min_prg_cvg", "max_prg_cvg", "count_below_epi_threshold", "count_above_epi_threshold"))
-
-district2 = cast(district2, ... ~ variable + fiscal_year)
+# district2 = cast(district2, ... ~ variable + fiscal_year)
 
 # write.csv(district, 'Datasets\\cvg_analysis\\district.csv')
 
