@@ -1,5 +1,6 @@
 \documentclass{article}
 \usepackage{pdflscape}
+\usepackage{graphicx}
 
 <<setup, echo=FALSE, results='hide', message=FALSE, warning=FALSE >>=
 require(xtable)
@@ -14,16 +15,23 @@ source('cvg_analysis_plots.R')
 \title{\Sexpr{DISEASE} Coverage Snapshot: \Sexpr{COUNTRY}, FY \Sexpr{FY}}
 \maketitle
 
-
+\begin{figure}
+\centering
+\begin{minipage}[t]{.4\textwidth}
+\centering
+\vspace{0pt}
+\includegraphics[width=\textwidth]{cvg_hist.pdf}
+\end{minipage}
+\begin{minipage}[t]{.4\textwidth}
+\centering
+\vspace{0pt}
 <<snapshot, results='asis' >>=
 print(xtable(c_snap), 
       include.colnames = FALSE)
 @
+\end{minipage}
+\end{figure}
 
-
-<<histogram >>=
-cvg_hist
-@
 
 \begin{landscape}
 

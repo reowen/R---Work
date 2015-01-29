@@ -27,6 +27,8 @@ cvg_hist <-  ggplot(cdata, aes(x=prg_cvg)) +
        x = 'Program Coverage', 
        y = '# districts')
 
+ggsave('cvg_hist.pdf', cvg_hist)
+
 # Categorize districts
 
 under_60 <- cdata[cdata$prg_cvg < 0.6, ]
@@ -78,5 +80,4 @@ c_snap <- t(country[(country$country_name == COUNTRY & country$fiscal_year == FY
 # hundred_plus.table <- xtable(hundred_plus)
 # 
 # # print(under_60.table, include.rownames=FALSE)
-
 
