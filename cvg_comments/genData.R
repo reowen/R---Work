@@ -28,9 +28,9 @@ raw['prg_cvg'] <- raw[,"persons_treated_usaid_funding"] / raw[,"persons_targeted
 raw['prg_cvg_r1'] <- raw[,"persons_treated_usaid_funding_r1"] / raw[,"persons_targeted_usaid_funding_r1"]
 raw['prg_cvg_r2'] <- raw[,"persons_treated_usaid_funding_r2"] / raw[,"persons_targeted_usaid_funding_r2"]
 
-raw['under_80'] <- ifelse(raw$prg_cvg < 0.8, 1, 0)
-raw['under_80_r1'] <- ifelse(raw$prg_cvg_r1 < 0.8, 1, 0)
-raw['under_80_r2'] <- ifelse(raw$prg_cvg_r2 < 0.8, 1, 0)
+raw['under_80'] <- ifelse(raw$prg_cvg < 0.8 & raw$prg_cvg > 0, 1, 0)
+raw['under_80_r1'] <- ifelse(raw$prg_cvg_r1 < 0.8 & raw$prg_cvg_r1 > 0, 1, 0)
+raw['under_80_r2'] <- ifelse(raw$prg_cvg_r2 < 0.8 & raw$prg_cvg_r2 > 0, 1, 0)
 
 raw['over_100'] <- ifelse(raw$prg_cvg > 1, 1, 0)
 raw['over_100_r1'] <- ifelse(raw$prg_cvg_r1 > 1, 1, 0)
@@ -38,7 +38,7 @@ raw['over_100_r2'] <- ifelse(raw$prg_cvg_r2 > 1, 1, 0)
 
 keep_cols = c("country_name", "region_name", "district_name", "fiscal_year", "disease", 
               "prg_cvg", "under_80", "over_100", "prg_cvg_r1", "under_80_r1", "over_100_r1", 
-              "prg_cvg_r2", "under_80_r2", "over_100_r2")
+              "prg_cvg_r2", "under_80_r2", "over_100_r2", "mda_comments")
 
 cvg_data <- raw[, keep_cols]
 write.csv(cvg_data, "cvg_comments.csv")
@@ -47,10 +47,7 @@ write.csv(cvg_data, "cvg_comments.csv")
 status = read.csv("C:\\Users\\reowen\\Documents\\Offline Files\\disease_status.csv")
 
 yrs <- c("FY13 (October 2012 - September 2013)", "FY14 (October 2013 - September 2014)", "FY12 (October 2011 - September 2012)")
-status_out <- status[(status$workbook_yr %in% yrs), ]
+status_out <- status[(status$workbook_yr %in% yrs & status$reporting_period_id == 2), ]
 
 write.csv(status_out, "status.csv")
-
-
-status_out <- status[status$]
 
