@@ -47,15 +47,20 @@ rm(c, cvg)
 # Program Coverage, FY13 and FY14 #
 ###################################
 
+order_df <- function(df){
+  return(df[with(df, order(country, region, district)), ])
+}
+
 cvg_cols <- c("country", "region", "district", "district_id", "prg_cvg")
 
-cvgFY13 <- data[data$workbook_year == 2013, cvg_cols]
-cvgFY13 <- cvgFY13[with(cvgFY13, order(country, region, district)), ]
-
-cvgFY14 <- data[data$workbook_year == 2014, cvg_cols]
-cvgFY14 <- cvgFY14[with(cvgFY14, order(country, region, district)), ]
-
-write.csv(cvgFY13, 'data/cvgFY13.csv')
-write.csv(cvgFY14, 'data/cvgFY14.csv')
-rm(cvgFY13, cvgFY14, cvg_cols)
+for(year in c(2013, 2014)){
+  df <- data[data$workbook_year == year & data$disease == 'lf', cvg_cols]
+  invisible(order_df(df))
+  write.csv(df, paste('data/', 'cvg', year, '_lf.csv', sep=""))
+  
+  df <- data[data$workbook_year == year & data$disease == 'trachoma', cvg_cols]
+  invisible(order_df(df))
+  write.csv(df, paste('data/', 'cvg', year, '_tra.csv', sep=""))
+}
+rm(year, df, cvg_cols, order_df)
 
