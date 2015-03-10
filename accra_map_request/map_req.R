@@ -54,13 +54,11 @@ order_df <- function(df){
 cvg_cols <- c("country", "region", "district", "district_id", "prg_cvg")
 
 for(year in c(2013, 2014)){
-  df <- data[data$workbook_year == year & data$disease == 'lf', cvg_cols]
-  invisible(order_df(df))
-  write.csv(df, paste('data/', 'cvg', year, '_lf.csv', sep=""))
-  
-  df <- data[data$workbook_year == year & data$disease == 'trachoma', cvg_cols]
-  invisible(order_df(df))
-  write.csv(df, paste('data/', 'cvg', year, '_tra.csv', sep=""))
+  for(disease in c('lf', 'trachoma')){
+    df <- data[data$workbook_year == year & data$disease == disease, cvg_cols]
+    invisible(order_df(df))
+    write.csv(df, paste('data/', 'cvg', year, '_', disease,  '.csv', sep=""))
+  }
 }
-rm(year, df, cvg_cols, order_df)
+rm(year, disease, df, cvg_cols, order_df)
 
